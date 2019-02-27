@@ -5,6 +5,7 @@ if [ -z "$USER" ];then
     export USER="$(id -un)"
 fi
 export LC_ALL=C
+export GAPPS_SOURCES_PATH=vendor/opengapps/sources/
 
 ## set defaults
 
@@ -54,6 +55,7 @@ Variants are dash-joined combinations of (in order):
 * processor type
   * "arm" for ARM 32 bit
   * "arm64" for ARM 64 bit
+  * "a64" for ARM 32 bit system with 64 bit binder
 * A or A/B partition layout ("aonly" or "ab")
 * GApps selection
   * "vanilla" to not include GApps
@@ -70,6 +72,7 @@ for example:
 
 * arm-aonly-vanilla-nosu-user
 * arm64-ab-gapps-su
+* a64-aonly-go-nosu
 EOF
 }
 
@@ -140,7 +143,7 @@ function get_rom_type() {
                 extra_make_options="WITHOUT_CHECK_API=true"
                 ;;
             pixel90)
-                mainrepo="https://github.com/PixelExperience-P/manifest.git"
+                mainrepo="https://github.com/PixelExperience/manifest.git"
                 mainbranch="pie"
                 localManifestBranch="android-9.0"
                 treble_generate="pixel"
@@ -312,7 +315,7 @@ function init_patches() {
 }
 
 function sync_repo() {
-    repo sync -c -j "$jobs" --force-sync
+    repo sync -c -j "$jobs" -f --force-sync --no-tag --no-clone-bundle --optimized-fetch --prune
 }
 
 function patch_things() {
