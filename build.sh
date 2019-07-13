@@ -10,11 +10,11 @@ if [ -z "$USER" ];then
 fi
 export LC_ALL=C
 
-aosp="android-8.1.0_r64"
+aosp="android-8.1.0_r65"
 phh="android-8.1"
 
 if [ "$1" == "android-9.0" ];then
-    aosp="android-9.0.0_r42"
+    aosp="android-9.0.0_r45"
     phh="android-9.0"
 fi
 
@@ -32,7 +32,7 @@ else
 fi
 repo sync -c -j 1 --force-sync
 (cd device/phh/treble; git clean -fdx; bash generate.sh)
-#(cd vendor/foss; git clean -fdx; bash update.sh)
+(cd vendor/foss; git clean -fdx; bash update.sh)
 
 . build/envsetup.sh
 
