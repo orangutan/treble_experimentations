@@ -50,6 +50,10 @@ ROM types:
   aex
   slim
   havoc
+  komodo
+  rebellion
+  aquarios
+  aosmp
 
 Variants are dash-joined combinations of (in order):
 * processor type
@@ -198,7 +202,34 @@ function get_rom_type() {
                 treble_generate="havoc"
                 extra_make_options="WITHOUT_CHECK_API=true"
                 ;;
-        esac
+	   komodo)
+                mainrepo="https://github.com/KomodOS-Rom/platform_manifest.git"
+                mainbranch="pie"
+                localManifestBranch="android-9.0"
+                treble_generate="komodo"
+                extra_make_options="WITHOUT_CHECK_API=true"
+                ;;
+	   rebellion)
+	        mainrepo="https://github.com/RebellionOS/manifest.git"
+		mainbranch="pie"
+		localManifestBranch="android-9.0"
+		treble_generate="rebellion"
+		extra_make_options="WITHOUT_CHECK_API=true"
+		;;
+	  aquarios)
+	        mainrepo="https://github.com/aquarios/manifest.git"
+		mainbranch="a9"
+		localManifestBranch="android-9.0"
+		treble_generate="aquarios"
+		extra_make_options="WITHOUT_CHECK_API=true"
+		;;
+	   aosmp)
+	   	mainrepo="https://gitlab.com/AOSmP/android_manifest.git"
+		mainbranch="pie"
+		localManifestBranch="android-9.0"
+		treble_generate="aosmp"
+		extra_make_options="WITHOUT_CHECK_API=true"
+	esac
         shift
     done
 }
@@ -356,6 +387,11 @@ function jack_env() {
     fi
 }
 
+function clean_build() {
+    make installclean
+    rm -rf "$OUT"
+}
+
 parse_options "$@"
 get_rom_type "$@"
 get_variants "$@"
@@ -389,3 +425,9 @@ jack_env
 for (( idx=0; idx < ${#variant_codes[*]}; idx++ )); do
     build_variant "${variant_codes[$idx]}" "${variant_names[$idx]}"
 done
+
+read -p "Do you want to clean? (y/N) " clean
+
+if [[ $clean == *"y"* ]];then 
+clean_build
+fi
