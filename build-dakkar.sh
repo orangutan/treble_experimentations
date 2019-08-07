@@ -33,27 +33,28 @@ Options:
 
 ROM types:
 
+  aex
+  aicp
+  aokp
+  aosmp
   aosp80
   aosp81
   aosp90
+  aquarios
   carbon
-  e-0.2
-  lineage151
-  lineage160
-  rr
-  pixel81
-  pixel90
   crdroid
-  mokee
-  aicp
-  aokp
-  aex
-  slim
+  e-0.2
   havoc
   komodo
+  lineage151
+  lineage160
+  mokee
+  pixel81
+  pixel90
+  potato
   rebellion
-  aquarios
-  aosmp
+  rr
+  slim
 
 Variants are dash-joined combinations of (in order):
 * processor type
@@ -151,6 +152,13 @@ function get_rom_type() {
                 mainbranch="pie"
                 localManifestBranch="android-9.0"
                 treble_generate="pixel"
+                extra_make_options="WITHOUT_CHECK_API=true"
+                ;;
+            potato)
+                mainrepo="https://github.com/PotatoProject/manifest.git"
+                mainbranch="baked-release"
+                localManifestBranch="android-9.0"
+                treble_generate="potato"
                 extra_make_options="WITHOUT_CHECK_API=true"
                 ;;
             crdroid)
