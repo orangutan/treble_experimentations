@@ -10,14 +10,17 @@ if [ -z "$USER" ];then
 fi
 export LC_ALL=C
 
+manifest_url="https://android.googlesource.com/platform/manifest"
 aosp="android-8.1.0_r65"
 phh="android-8.1"
 
 if [ "$1" == "android-9.0" ];then
-    aosp="android-9.0.0_r47"
+    manifest_url="https://gitlab.com/aosp-security/manifest"
+    aosp="android-9.0.0_r50-r47"
     phh="android-9.0"
 elif [ "$1" == "android-10.0" ];then
-    aosp="android-10.0.0_r2"
+    manifest_url="https://android.googlesource.com/platform/manifest"
+    aosp="android-10.0.0_r14"
     phh="android-10.0"
 fi
 
@@ -26,13 +29,15 @@ if [ "$release" == true ];then
     [ ! -f "$originFolder/release/config.ini" ] && exit 1
 fi
 
-repo init -u https://android.googlesource.com/platform/manifest -b $aosp
+repo init -u "$manifest_url" -b $aosp
 if [ -d .repo/local_manifests ] ;then
 	( cd .repo/local_manifests; git fetch; git reset --hard; git checkout origin/$phh)
 else
 	git clone https://github.com/phhusson/treble_manifest .repo/local_manifests -b $phh
 fi
 repo sync -c -j 1 --force-sync
+
+repo forall -r '.*opengapps.*' -c 'git lfs fetch && git lfs checkout'
 (cd device/phh/treble; git clean -fdx; bash generate.sh)
 (cd vendor/foss; git clean -fdx; bash update.sh)
 
