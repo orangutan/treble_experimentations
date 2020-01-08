@@ -16,11 +16,11 @@ phh="android-8.1"
 
 if [ "$1" == "android-9.0" ];then
     manifest_url="https://gitlab.com/aosp-security/manifest"
-    aosp="android-9.0.0_r50-r47"
+    aosp="android-9.0.0_r51-r47"
     phh="android-9.0"
 elif [ "$1" == "android-10.0" ];then
     manifest_url="https://android.googlesource.com/platform/manifest"
-    aosp="android-10.0.0_r14"
+    aosp="android-10.0.0_r25"
     phh="android-10.0"
 fi
 
@@ -40,6 +40,7 @@ repo sync -c -j 1 --force-sync
 repo forall -r '.*opengapps.*' -c 'git lfs fetch && git lfs checkout'
 (cd device/phh/treble; git clean -fdx; bash generate.sh)
 (cd vendor/foss; git clean -fdx; bash update.sh)
+rm -Rf vendor/gapps/interfaces
 
 . build/envsetup.sh
 
