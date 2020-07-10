@@ -118,7 +118,7 @@ function get_rom_type() {
                 ;;
             aosp10)
                 mainrepo="https://android.googlesource.com/platform/manifest.git"
-                mainbranch="android-10.0.0_r25"
+                mainbranch="android-10.0.0_r33"
                 localManifestBranch="android-10.0"
                 treble_generate=""
                 extra_make_options=""
@@ -284,14 +284,6 @@ function get_rom_type() {
                 extra_make_options="WITHOUT_CHECK_API=true"
                 jack_enabled="false"
                 ;;
-	    graphene9)
-	    	mainrepo="https://github.com/GrapheneOS/platform_manifest.git"
-		mainbranch="pie"
-		localManifestBranch="android-9.0"
-		treble_generate="graphene"
-		extra_make_options="WITHOUT_CHECK_API=true"
-		jack_enabled="false"
-                ;;
 	   graphene10)
 	   	mainrepo="https://github.com/GrapheneOS/platform_manifest.git"
 		mainbranch="10"
@@ -398,9 +390,24 @@ function init_local_manifest() {
     clone_or_checkout .repo/local_manifests treble_manifest
 }
 
+download_patches() {
+	if [[ $localManifestBranch == android-10.0 ]];then
+		githubMatch=v2..
+	elif [[ $localManifestBranch == android-9.0 ]];then
+		githubMatch=v1..
+	else
+		githubMatch=v..
+	fi
+    jq --help > /dev/null
+	wantedRelease="$(curl --silent https://api.github.com/repos/phhusson/treble_experimentations/releases |jq -r '.[] | .tag_name' |grep -E "$githubMatch\$" |sort -V | tail -n 1)"
+	wget "https://github.com/phhusson/treble_experimentations/releases/download/$wantedRelease/patches.zip" -O patches.zip
+	rm -Rf patches
+	unzip patches.zip -d patches
+}
+
 function init_patches() {
     if [[ -n "$treble_generate" ]]; then
-        clone_or_checkout patches treble_patches
+	download_patches
 
         # We don't want to replace from AOSP since we'll be applying
         # patches by hand
